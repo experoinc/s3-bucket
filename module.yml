@@ -422,7 +422,7 @@ Resources:
           Resource: !Sub '${Bucket.Arn}/*'
           Condition:
             NumericLessThan:
-            's3:TlsVersion': !Ref MinimumTlsVersion
+              's3:TlsVersion': !Ref MinimumTlsVersion
   CloudFrontOriginAccessIdentity:
     Condition: HasCloudFrontReadAccess
     Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'

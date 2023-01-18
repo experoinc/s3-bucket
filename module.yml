@@ -121,6 +121,7 @@ Conditions:
   HasPartitionPublic: !Equals [!Ref 'AWS::Partition', 'aws']
   HasPartitionChina: !Equals [!Ref 'AWS::Partition', 'aws-cn']
   HasPartitionUsGov: !Equals [!Ref 'AWS::Partition', 'aws-us-gov']
+  EnforceMinimumTlsVersion: !Not [!Equals [!Ref MinimumTlsVersion, 0]]
 Resources:
   PolicyLambdaEventTarget1:
     Type: 'AWS::IAM::Policy'
@@ -409,6 +410,7 @@ Resources:
           Action: 's3:GetBucketAcl'
           Resource: !GetAtt 'Bucket.Arn'
   BucketPolicyMinimumTlsVersion:
+    Condition: EnforceMinimumTlsVersion
     Type: 'AWS::S3::BucketPolicy'
     Properties:
       Bucket: !Ref Bucket

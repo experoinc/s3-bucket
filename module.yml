@@ -94,6 +94,11 @@ Parameters:
     Type: String
     AllowedValues: ['true', 'false']
     Default: 'false'
+  MinimumTlsVersion:
+    Description: 'Specifies the minimum version of TLS to be used when establishing communication to Amazon S3. Any attempt of communication with a TLS version below the specified one will be denied.'
+    Type: Number
+    Default: 0
+    MinValue: 0
 Conditions:
   HasKmsKeyModule: !Not [!Equals [!Ref KmsKeyModule, '']]
   HasPrivateAccess: !Equals [!Ref Access, Private]
@@ -403,6 +408,21 @@ Resources:
             Service: 'delivery.logs.amazonaws.com'
           Action: 's3:GetBucketAcl'
           Resource: !GetAtt 'Bucket.Arn'
+  BucketPolicyMinimumTlsVersion:
+    Condition: HasFlowLogWriteAccess
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement: # https://repost.aws/knowledge-center/s3-enforce-modern-tls
+        - Principal: '*'
+          Action: 's3:*'
+          Effect: Deny
+          Resource: !Sub '${Bucket.Arn}/*'
+          Condition:
+            NumericLessThan:
+            's3:TlsVersion': !Ref MinimumTlsVersion
   CloudFrontOriginAccessIdentity:
     Condition: HasCloudFrontReadAccess
     Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'

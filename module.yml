@@ -417,8 +417,7 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement: # https://repost.aws/knowledge-center/s3-enforce-modern-tls
-        - Sid: EnforceMinimumTlsVersion
-          Principal:
+        - Principal:
             AWS: '*'
           Action: 's3:*'
           Effect: Deny

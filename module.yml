@@ -417,10 +417,14 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement: # https://repost.aws/knowledge-center/s3-enforce-modern-tls
-        - Principal: '*'
+        - Sid: EnforceMinimumTlsVersion
+          Principal:
+            AWS: '*'
           Action: 's3:*'
           Effect: Deny
-          Resource: !Sub '${Bucket.Arn}/*'
+          Resource:
+          - !Sub '${Bucket.Arn}/*'
+          - !GetAtt 'Bucket.Arn'
           Condition:
             NumericLessThan:
               's3:TlsVersion': !Ref MinimumTlsVersion
